@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mark Attendance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script>
+        function toggleAttendance(id) {
+            var checkbox = document.getElementById('attendance-' + id);
+            var status = checkbox.checked ? 'Present' : 'Absent';
+            document.getElementById('status-' + id).innerText = status;
+        }
+    </script>
+    <style>
+        .slider {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+        .slider input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider-round {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            border-radius: 34px;
+            cursor: pointer;
+        }
+        .slider-round:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: .4s;
+        }
+        input:checked + .slider-round {
+            background-color: #2196F3;
+        }
+        input:checked + .slider-round:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">Mark Attendance</h1>
+        <table class="table table-bordered">
+            <thead class="thead-light">
+                <tr>
+                    <th>Class/Section</th>
+                    <th>Year/Semester</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for class_section in classes_and_sections %}
+                    {% for year_semester in years_and_semesters %}
+                    <tr>
+                        <td>{{ class_section['class_section'] }}</td>
+                        <td>{{ year_semester['year_semester'] }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('mark_attendance_filter') }}">
+                                <input type="hidden" name="class_section" value="{{ class_section['class_section'] }}">
+                                <input type="hidden" name="year_semester" value="{{ year_semester['year_semester'] }}">
+                                <button type="submit" class="btn btn-primary">Get Students</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if students is not none %}
+            {% if students %}
+                <form method="post" action="{{ url_for('mark_attendance') }}">
+                    <input type="hidden" name="class_section" value="{{ request.form['class_section'] }}">
+                    <input type="hidden" name="year_semester" value="{{ request.form['year_semester'] }}">
+                    <div class="form-group">
+                        <label for="date">Date:</label>
+                        <input type="date" class="form-control" id="date" name="date" value="{{ current_date }}" required>
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-primary mb-2">Submit Attendance</button>
+                        <button type="button" class="btn btn-secondary mb-2" onclick="location.href='/'">Home</button>
+                        <button type="reset" class="btn btn-warning mb-2">Reset</button>
+                        <button type="button" class="btn btn-info mb-2" onclick="location.href='/view_attendance'">View Attendance</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered mt-4">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Sn</th>
+                                    <th>Roll Number</th>
+                                    <th>Name</th>
+                                    <th>Present/Absent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>{{ student['roll_number'] }}</td>
+                                    <td>{{ student['name'] }}</td>
+                                    <td>
+                                        <label class="switch slider">
+                                            <input type="checkbox" id="attendance-{{ student['id'] }}" name="attendance-{{ student['id'] }}" onclick="toggleAttendance({{ student['id'] }})" {% if student['status'] == 'present' %}checked{% endif %}>
+                                            <span class="slider-round"></span>
+                                        </label>
+                                        <span id="status-{{ student['id'] }}" class="{{ 'present' if student['status'] == 'present' else 'absent' }}">{{ student['status'].capitalize() }}</span>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </form>
+            {% else %}
+                <div class="alert alert-info text-center mt-4">No records found for the selected Class/Section and Year/Semester.</div>
+            {% endif %}
+        {% endif %}
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

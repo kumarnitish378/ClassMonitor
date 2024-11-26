@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Student</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4 text-center">Add Student</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="alert alert-info">
+                    {% for message in messages %}
+                        {{ message }}<br>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form method="post">
+            <div class="form-group">
+                <label for="roll_number">Roll Number:</label>
+                <input type="text" class="form-control" id="roll_number" name="roll_number" required>
+            </div>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="subjects">Subjects (comma-separated):</label>
+                <input type="text" class="form-control" id="subjects" name="subjects" required>
+            </div>
+            <div class="form-group">
+                <label for="class_section">Class/Section:</label>
+                <input type="text" class="form-control" id="class_section" name="class_section" required>
+            </div>
+            <div class="form-group">
+                <label for="year_semester">Year/Semester:</label>
+                <input type="text" class="form-control" id="year_semester" name="year_semester" required>
+            </div>
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary">Add Student</button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='/'">Home</button>
+                <button type="reset" class="btn btn-warning">Reset</button>
+            </div>
+            <div class="form-group text-center mt-3">
+                <button type="button" class="btn btn-info" onclick="location.href='/view_attendance'">View Attendance</button>
+                <button type="button" class="btn btn-success" onclick="location.href='/mark_attendance'">Mark Attendance</button>
+            </div>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
